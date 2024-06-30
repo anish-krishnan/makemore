@@ -3,13 +3,13 @@ import string
 import torch
 
 
-class BigramLanguageModel:
+class BigramCharacterModel:
     SPECIAL_TOKEN = "-"
     IMAGE_SIZE = 8
     FONT_SIZE = 5
 
     def __init__(self):
-        alphabet = list(BigramLanguageModel.SPECIAL_TOKEN + string.ascii_lowercase)
+        alphabet = list(BigramCharacterModel.SPECIAL_TOKEN + string.ascii_lowercase)
         self.K = len(alphabet)
         self.char_to_int = {char: idx for idx, char in enumerate(alphabet)}
         self.int_to_char = {idx: char for idx, char in enumerate(alphabet)}
@@ -18,7 +18,7 @@ class BigramLanguageModel:
 
     def get_bigrams_from_words(self, words):
         for word in words:
-            word = f"{BigramLanguageModel.SPECIAL_TOKEN}{word}{BigramLanguageModel.SPECIAL_TOKEN}"
+            word = f"{BigramCharacterModel.SPECIAL_TOKEN}{word}{BigramCharacterModel.SPECIAL_TOKEN}"
             for char1, char2 in zip(word, word[1:]):
                 idx1, idx2 = self.char_to_int[char1], self.char_to_int[char2]
                 yield ((char1, idx1), (char2, idx2))
@@ -64,7 +64,7 @@ class BigramLanguageModel:
             ).item()
 
         word = ""
-        special_token_idx = self.char_to_int[BigramLanguageModel.SPECIAL_TOKEN]
+        special_token_idx = self.char_to_int[BigramCharacterModel.SPECIAL_TOKEN]
         current_char_idx = self.char_to_int[self.SPECIAL_TOKEN]
         while (
             current_char_idx := sample_next_char_idx(current_char_idx)

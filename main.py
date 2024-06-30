@@ -1,22 +1,22 @@
 import argparse
-from bigram_language_model import BigramLanguageModel
+from bigram_character_model import BigramCharacterModel
 
 
 def main(filename, num_words_to_generate, show_bigram_model_visualization):
     words = open(filename, "r").read().splitlines()
 
     # Train the model and maybe show a visualization
-    bigram_language_model = BigramLanguageModel()
-    bigram_language_model.train(words)
+    bigram_character_model = BigramCharacterModel()
+    bigram_character_model.train(words)
     if show_bigram_model_visualization:
-        bigram_language_model.visualize()
+        bigram_character_model.visualize()
 
     # Generate the model
     for _ in range(num_words_to_generate):
-        print(bigram_language_model.generate_word())
+        print(bigram_character_model.generate_word())
 
     # Print the loss against training data
-    print(f"\nloss (NLL): {bigram_language_model.get_loss(words)}")
+    print(f"\nloss (NLL): {bigram_character_model.get_loss(words)}")
 
 
 if __name__ == "__main__":
