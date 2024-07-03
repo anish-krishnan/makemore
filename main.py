@@ -1,26 +1,30 @@
 import argparse
 from bigram_character_model import BigramCharacterModel
+from bigram_character_model_nn import BigramCharacterModelNN
 
 
-def main(filename, num_words_to_generate, show_bigram_model_visualization):
+def main(model, filename, num_words_to_generate, show_bigram_model_visualization):
     words = open(filename, "r").read().splitlines()
 
     # Train the model and maybe show a visualization
-    bigram_character_model = BigramCharacterModel()
-    bigram_character_model.train(words)
+    model = model()
+    model.train(words)
     if show_bigram_model_visualization:
-        bigram_character_model.visualize()
+        model.visualize()
 
     # Generate the model
     for _ in range(num_words_to_generate):
-        print(bigram_character_model.generate_word())
+        print(model.generate_word())
 
     # Print the loss against training data
-    print(f"\nloss (NLL): {bigram_character_model.get_loss(words)}")
+    print(f"\nloss (NLL): {model.get_loss(words)}")
 
 
 if __name__ == "__main__":
+    STR_TO_MODEL = {"BIGRAM": BigramCharacterModel, "BIGRAM_NN": BigramCharacterModelNN}
     parser = argparse.ArgumentParser(description="Process some words.")
+
+    parser.add_argument("-model", choices=STR_TO_MODEL.keys(), help="model to use")
     parser.add_argument(
         "-filename",
         required=True,
@@ -41,5 +45,8 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     main(
-        args.filename, args.num_words_to_generate, args.show_bigram_model_visualization
+        STR_TO_MODEL[args.model],
+        args.filename,
+        args.num_words_to_generate,
+        args.show_bigram_model_visualization,
     )
