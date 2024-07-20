@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import string
 import torch
 import torch.nn.functional as F
+from tqdm import tqdm
 
 
 class BigramCharacterModelNN:
@@ -13,7 +14,7 @@ class BigramCharacterModelNN:
 
     def __init__(self, verbose=False):
         self.verbose = verbose
-        alphabet = list(BigramCharacterModelNN.SPECIAL_TOKEN + string.ascii_lowercase)
+        alphabet = list(self.SPECIAL_TOKEN + string.ascii_lowercase)
         self.K = len(alphabet)
         self.char_to_int = {char: idx for idx, char in enumerate(alphabet)}
         self.int_to_char = {idx: char for idx, char in enumerate(alphabet)}
@@ -24,7 +25,7 @@ class BigramCharacterModelNN:
 
     def get_bigrams_from_words(self, words):
         for word in words:
-            word = f"{BigramCharacterModelNN.SPECIAL_TOKEN}{word}{BigramCharacterModelNN.SPECIAL_TOKEN}"
+            word = f"{self.SPECIAL_TOKEN}{word}{self.SPECIAL_TOKEN}"
             for char1, char2 in zip(word, word[1:]):
                 yield self.char_to_int[char1], self.char_to_int[char2]
 
@@ -46,9 +47,7 @@ class BigramCharacterModelNN:
         if targets is not None:
             y_probabilities = probabilities[torch.arange(N), targets]
 
-            regularization = (
-                BigramCharacterModelNN.REGULARIZATION_RATIO * (self.weights**2).mean()
-            )
+            regularization = self.REGULARIZATION_RATIO * (self.weights**2).mean()
             loss = -y_probabilities.log().mean() + regularization
         return probabilities, loss
 
@@ -73,11 +72,9 @@ class BigramCharacterModelNN:
         def backward_pass(loss):
             self.weights.grad = None
             loss.backward()
-            self.weights.data += (
-                -BigramCharacterModelNN.LEARNING_RATE * self.weights.grad
-            )
+            self.weights.data += -self.LEARNING_RATE * self.weights.grad
 
-        for i in range(200):
+        for i in tqdm(range(200)):
             _, loss = self.forward(xs_encoded, ys)
             if self.verbose:
                 print(f"loss({i}): {loss.item()}")

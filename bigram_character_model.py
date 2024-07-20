@@ -9,7 +9,7 @@ class BigramCharacterModel:
     FONT_SIZE = 5
 
     def __init__(self):
-        alphabet = list(BigramCharacterModel.SPECIAL_TOKEN + string.ascii_lowercase)
+        alphabet = list(self.SPECIAL_TOKEN + string.ascii_lowercase)
         self.K = len(alphabet)
         self.char_to_int = {char: idx for idx, char in enumerate(alphabet)}
         self.int_to_char = {idx: char for idx, char in enumerate(alphabet)}
@@ -18,7 +18,7 @@ class BigramCharacterModel:
 
     def get_bigrams_from_words(self, words):
         for word in words:
-            word = f"{BigramCharacterModel.SPECIAL_TOKEN}{word}{BigramCharacterModel.SPECIAL_TOKEN}"
+            word = f"{self.SPECIAL_TOKEN}{word}{self.SPECIAL_TOKEN}"
             for char1, char2 in zip(word, word[1:]):
                 idx1, idx2 = self.char_to_int[char1], self.char_to_int[char2]
                 yield ((char1, idx1), (char2, idx2))
@@ -64,7 +64,7 @@ class BigramCharacterModel:
             ).item()
 
         word = ""
-        special_token_idx = self.char_to_int[BigramCharacterModel.SPECIAL_TOKEN]
+        special_token_idx = self.char_to_int[self.SPECIAL_TOKEN]
         current_char_idx = self.char_to_int[self.SPECIAL_TOKEN]
         while (
             current_char_idx := sample_next_char_idx(current_char_idx)
